@@ -14,16 +14,17 @@ const TextSection = () => {
   return (
     <>
       <Heading as="h2" fontSize="3xl">
-        Welcome
+        Welcome 👋
       </Heading>
 
       <Box
         backgroundColor={colorMode === "light" ? "gray.200" : "gray.500"}
         padding={4}
         borderRadius={4}
+        mt={2}
       >
-        <Box d="flex" alignItems="center" fontSize={textSize}>
-          Next.js starter fueled with Typescript and Chakra-UI.
+        <Box d="flex" alignItems="center" fontSize={textSize} >
+          Basic dApp practice project for tracking any transaction on ethereum blockchain.
         </Box>
       </Box>
     </>
