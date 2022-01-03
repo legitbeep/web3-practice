@@ -1,6 +1,6 @@
 const main = async () => {
   const Transactions = await hre.ethers.getContractFactory("Transactions");
-  const transaction = await Transactions.deploy("Hello, Hardhat!");
+  const transaction = await Transactions.deploy();
 
   await transaction.deployed();
 

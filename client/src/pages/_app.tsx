@@ -8,6 +8,7 @@ import defaultSeoConfig from "../../next-seo.config";
 import Layout from "components/layout";
 import customTheme from "styles/customTheme";
 import "styles/globals.css";
+import { TransactionProvider } from '../context/TransactionContext'
 
 function MyApp({
   Component,
@@ -20,7 +21,9 @@ function MyApp({
         </Head>
         <DefaultSeo {...defaultSeoConfig} />
         <Layout>
-          <Component {...pageProps} />
+          <TransactionProvider>
+            <Component {...pageProps} />
+          </TransactionProvider>
         </Layout>
       </ChakraProvider>
   );

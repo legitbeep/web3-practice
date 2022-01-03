@@ -1,7 +1,12 @@
+import { useContext } from 'react';
 import { Button, FormControl, Input, FormErrorMessage, Box, FormLabel} from '@chakra-ui/react';
 
+import { TransactionContext } from 'context/TransactionContext';
+
 const Form = () => {
-    const handleSubmit = () => {
+  //const {} = useContext(TransactionContext);
+
+  const handleSubmit = () => {
 
     }
     return (
