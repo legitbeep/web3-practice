@@ -4,53 +4,73 @@ import { Button, FormControl, Input, FormErrorMessage, Box, FormLabel} from '@ch
 import { TransactionContext } from 'context/TransactionContext';
 
 const Form = () => {
-  //const {} = useContext(TransactionContext);
+  const { connectWallet, currentAccount, sendTransaction, handleChange } = useContext(TransactionContext);
 
-  const handleSubmit = () => {
+  const handleSubmit:React.FormEventHandler<HTMLFormElement> = (e) => {
+    e.preventDefault();
+    //const { addressTo, amount, keyword, message } = formData;
+    sendTransaction();
+  }
 
-    }
     return (
-   <Box>
+    <Box>
         <form onSubmit={handleSubmit} style={{ maxWidth:"400px", margin:"0 auto"}}>
-      <FormControl mt={4} >
-        <FormLabel htmlFor='name'>From</FormLabel>
-        <Input
-          id='From'
-          placeholder='Enter address of sender'
-          type="text"
-          isRequired={true}
-          minLength={4}
-        />
-      </FormControl>
-      <FormControl mt={4} >
-        <FormLabel htmlFor='name'>To</FormLabel>
-        <Input
-          id='From'
-          placeholder='Enter address of reciver'
-          type="text"
-          isRequired={true}
-          minLength={4}
-        />
-      </FormControl>
-      <FormControl mt={4} >
-        <FormLabel htmlFor='name'>Amount</FormLabel>
-        <Input
-          id='From'
-          placeholder='Enter amount'
-          type="number"
-          isRequired={true}
-          minLength={4}
-        />
-      </FormControl>
-      <Button mt={4} colorScheme='teal' type='submit'>
-        Submit
-      </Button>
-    </form>
-   </Box>
+          {
+            currentAccount ?
+            (
+              <>
+              <FormControl mt={4} >
+                <FormLabel htmlFor='name'>Reciever Address</FormLabel>
+                <Input
+                  id='to'
+                  name="addressto"
+                  placeholder='Enter address of receiver'
+                  type="text"
+                  isRequired={true}
+                  onChange={(e) => handleChange(e,"addressTo")}
+                />
+              </FormControl>
+              <FormControl mt={4} >
+                <FormLabel htmlFor='name'>Amount (ETH)</FormLabel>
+                <Input
+                  id='amount'
+                  placeholder='Enter amount of ETH'
+                  type="number"
+                  step="0.000001"
+                  isRequired={true}
+                  onChange={(e) => handleChange(e,"amount")}
+                />
+              </FormControl>
+              <FormControl mt={4} >
+                <FormLabel htmlFor='name'>Keyword (GIF)</FormLabel>
+                <Input
+                  id='keyword'
+                  placeholder='Enter GIF'
+                  type="text"
+                  isRequired={true}
+                  onChange={(e) => handleChange(e,"keyword")}
+                />
+              </FormControl>
+              <FormControl mt={4} >
+                <FormLabel htmlFor='name'>Message</FormLabel>
+                <Input
+                  id='message'
+                  placeholder='Enter message'
+                  type="text"
+                  isRequired={true}
+                  onChange={(e) => handleChange(e,"message")}
+                />
+              </FormControl>
+              <Button mt={4} w="full" colorScheme='teal' type='submit'>
+                Submit
+              </Button>
+              </>)
+              :
+              <Button onClick={connectWallet} w="full" margin="10px auto" colorScheme="teal">Connect to Wallet</Button>
+          }
+        </form>
+    </Box>
     )
 }
-{/* <FormErrorMessage>
-  {errors.name && errors.name.message}
-</FormErrorMessage> */}
 
 export default Form;
