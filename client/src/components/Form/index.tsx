@@ -1,16 +1,17 @@
-import { useContext } from 'react';
+import { useContext, memo } from 'react';
 import { Button, FormControl, Input, FormErrorMessage, Box, FormLabel} from '@chakra-ui/react';
 
 import { TransactionContext } from 'context/TransactionContext';
 
 const Form = () => {
-  const { connectWallet, currentAccount, sendTransaction, handleChange } = useContext(TransactionContext);
+  const { connectWallet, currentAccount, sendTransaction, handleChange, logout } = useContext(TransactionContext);
 
   const handleSubmit:React.FormEventHandler<HTMLFormElement> = (e) => {
     e.preventDefault();
     //const { addressTo, amount, keyword, message } = formData;
     sendTransaction();
   }
+  console.log(currentAccount)
 
     return (
     <Box>
@@ -64,6 +65,9 @@ const Form = () => {
               <Button mt={4} w="full" colorScheme='teal' type='submit'>
                 Submit
               </Button>
+              <Button mt={4} w="full" onClick={logout}>
+                Logout
+              </Button>
               </>)
               :
               <Button onClick={connectWallet} w="full" margin="10px auto" colorScheme="teal">Connect to Wallet</Button>
@@ -73,4 +77,4 @@ const Form = () => {
     )
 }
 
-export default Form;
+export default memo(Form);

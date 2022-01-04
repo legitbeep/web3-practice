@@ -10,36 +10,71 @@ import { contractABI, contractAddress } from '../utils/constants';
 export const TransactionContext = createContext();
 
 
+const getItem = (name) => {
+    if(typeof window !== "undefined") {
+        return JSON.parse(localStorage.getItem(name))
+    } else return 0;
+}
+const setItem = (name, value) => {
+    if(typeof window !== "undefined") {
+        localStorage[name] = value;
+    }
+}
+
 export const TransactionProvider = ({ children }) => {
     const [currentAccount, setCurrentAccount] = useState("");
     const [formData, setFormData] = useState({ addressTo: "" , amount : "", keyword: "", message: ""})
     const [ethereum, setEthereum] = useState(null);
+    const [transactionCount,setTransactionCount] = useState(getItem("transactionCount"));
+    const [loading, setLoading] = useState(false);
 
     const handleChange = (e, name) => {
         setFormData(prev => ({...prev, [name]: e.target.value}))
     }
 
+    const logout = () => {
+        setCurrentAccount("");
+    }
+
     const getEthereumContract = () => {
         const provider = new ethers.providers.Web3Provider(ethereum);
         const signer = provider.getSigner();
-        const transactionContract = new ethers.Contract(contractAddress, [contractABI], signer);
+        const transactionContract = new ethers.Contract(contractAddress, contractABI.abi, signer);
     
-        console.log({provider, signer, transactionContract});
-    
+        return transactionContract;
     }
 
     const sendTransaction = async() => {
         try{
             if (!ethereum) return alert("Please install metamast!");
             const { addressTo, amount, keyword, message } = formData;
+            const transactionContract = getEthereumContract();
+            const parsedAmount = ethers.utils.parseEther(amount);
+            console.log(parsedAmount)
+            setLoading(true);
+            await ethereum.request({
+                method: "eth_sendTransaction",
+                params: [{
+                    from: currentAccount,
+                    to: addressTo,
+                    gas: "0x5208", // 21000 WEI = 0.000021 ETH
+                    value: parsedAmount._hex, // only hex
+                }]
+            });
 
-            getEthereumContract();
+            const transactionHash = await transactionContract.addToBlockchain(addressTo, parsedAmount, message, keyword);
+            await transactionHash.wait();
+            const transactionCount = await transactionContract.getTransactionCount();
+
+            setLoading(false);
+            setTransactionCount(transactionCount.toNumber())
+            setItem("transactionCount", transactionCount.toNumber());
         } catch(err) {
             console.log(err)
         }
     }
 
-    const checkIfWalletisConntected = async() => {
+    const checkIfWalletisConntected = async(ethereum) => {
         try {
             if (!ethereum) return alert("Please install metamast!");
         
@@ -56,7 +91,7 @@ export const TransactionProvider = ({ children }) => {
         }
     }
 
-    const connectWallet = async() => {
+    const connectWallet = async(ethereum) => {
         try{
             if(!ethereum) return alert('Please install metamask!');
             const accounts = await ethereum.request({method: 'eth_requestAccounts'});
@@ -70,12 +105,12 @@ export const TransactionProvider = ({ children }) => {
 
     useEffect(() => {
         const {ethereum} = window;
-        flushSync( () => setEthereum(ethereum) );
-        checkIfWalletisConntected();
+        setEthereum(ethereum);
+        checkIfWalletisConntected(ethereum);
     },[])
 
     return (
-        <TransactionContext.Provider value={{ connectWallet, currentAccount, handleChange, sendTransaction  }}>
+        <TransactionContext.Provider value={{ connectWallet, currentAccount, handleChange, sendTransaction, transactionCount, logout }}>
             {children}
         </TransactionContext.Provider>
     )
