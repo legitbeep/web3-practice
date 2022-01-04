@@ -5,6 +5,7 @@ import CTASection from "components/CTASection";
 import ImageSection from "components/ImageSection";
 
 import Form from 'components/Form'
+import Transactions from "components/Transactions";
 
 const Home = () => {
   return (
@@ -12,6 +13,7 @@ const Home = () => {
       <TextSection />
       <ImageSection />
       <Form />
+      <Transactions />
     </Box>
   );
 };

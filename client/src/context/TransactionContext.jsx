@@ -9,7 +9,6 @@ import { contractABI, contractAddress } from '../utils/constants';
 
 export const TransactionContext = createContext();
 
-
 const getItem = (name) => {
     if(typeof window !== "undefined") {
         return JSON.parse(localStorage.getItem(name))
@@ -30,6 +29,18 @@ export const TransactionProvider = ({ children }) => {
 
     const handleChange = (e, name) => {
         setFormData(prev => ({...prev, [name]: e.target.value}))
+    }
+
+    const getAllTransactions = async () => {
+        try{
+            if (!ethereum) return alert("Please install metamast!");
+            const transactionContract = new ethers.Contract(contractAddress, contractABI.abi, signer);
+            const availableTransactions = await transactionContract.getAllTransactions();
+            
+            console.log(availableTransactions)
+        } catch(err) {
+            console.log(err)
+        }
     }
 
     const logout = () => {
@@ -82,11 +93,22 @@ export const TransactionProvider = ({ children }) => {
             
             if( accounts.length ) {
                 setCurrentAccount(accounts[0])
-                // getAllTransactions();
+                getAllTransactions();
             } else {
                 console.log("No account found!")
             }
         } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const checkIfTransactionsExist = async() => {
+        try{
+            const transactionContract = getEthereumContract();
+            const transactionCount = await transactionContract.getTransactionCount();
+
+            setItem("transactionCount", transactionCount);
+        } catch(err) {
             console.log(err)
         }
     }
@@ -107,6 +129,7 @@ export const TransactionProvider = ({ children }) => {
         const {ethereum} = window;
         setEthereum(ethereum);
         checkIfWalletisConntected(ethereum);
+        checkIfTransactionsExist();
     },[])
 
     return (
