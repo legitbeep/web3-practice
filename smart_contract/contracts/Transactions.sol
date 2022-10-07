@@ -21,7 +21,7 @@ contract Transactions {
 
     // function and its visibility
     function addToBlockchain(address payable to, uint amount, string memory message, string memory keyword) public {
-        transactionCount += 1;
+        transactionCount = transactions + 1;
         transactions.push(TransferStruct(msg.sender, to, amount, message, block.timestamp, keyword));
 
         emit Transfer(msg.sender, to, amount, message, block.timestamp, keyword);
